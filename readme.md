@@ -33,7 +33,8 @@
 
 		* 需要先安装node-gyp
 
-			node-gyp是用来编译nodejieba用的，因为nodejieba底层使用的是c++
+			node-gyp是用来编译nodejieba用的，因为nodejieba底层使用的是c++  
+			https://github.com/nodejs/node-gyp#installation
 	
 			* make
 
