@@ -57,6 +57,6 @@
 				`npm install -g node-gyp`
 
 
-		* node-jieba
+		* nodejieba
 
-			`npm install node-jieba`
+			`npm install nodejieba`
