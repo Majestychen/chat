@@ -1,6 +1,6 @@
 * nodejs version
 
-	5.7.0
+	4.3.1
 
 * nodejieba
 
@@ -60,3 +60,27 @@
 		* nodejieba
 
 			`npm install nodejieba`
+
+* windows上进行docker开发
+
+	* 文件映射
+
+		* 三层关系
+
+			windows -> virtualbox 上的linux(boot2docker) -> 运行在linux上的docker container
+
+		* 文件如何映射
+
+			* 首先需要进行 windows和virtualbox间的文件映射
+
+				启动virtualbox虚拟机，运行boot2docker  
+				在虚拟机的文件共享中设定共享 chat -> c:\gitWorkspace\chat  
+				然后到linux上进行mount `mount -t vboxsf chat /root/chat`  
+				注意chat 是一个名字，一放连着windows（在virtualbox中设定）  
+				另一方连着linux（通过mount命令执行）  
+				取消mount命令`umount -a`
+
+			* 然后进行 vitualbox的linux和 docker container的映射
+
+				`docker run -it -d -p 3000:3000 -v root/chat:/root/chat --name chat yisuren/chat`
+				
