@@ -26,14 +26,20 @@
 
 			`npm install node-gyp --save-dev`
 		* `npm intall nodejieba --save-dev` 成功！
-		* 到此安装成功，但是实际使用报错，折腾了半天，未能成功，设计到.NetFramework中的文件，就没有继续调查了
-		* 最终该结论： 安装失败
+		* 到此安装成功，但是实际使用报错
+
+			需要使用C++编译，官网上很多人都反映windows上编译有问题  
+			没有继续调查
+
+		* 最终该结论
+
+			安装失败， 最终决定在windows上用docker开发
 
 	* 安装（centos）
 
 		* 需要先安装node-gyp
 
-			node-gyp是用来编译nodejieba用的，因为nodejieba底层使用的是c++  
+			node-gyp是用来编译nodejieba用的，因为nodejieba底层使用的是C++  
 			https://github.com/nodejs/node-gyp#installation
 	
 			* make
@@ -82,5 +88,6 @@
 
 			* 然后进行 vitualbox的linux和 docker container的映射
 
+				-v 参数， 宿主机目录 : docker容器目录  
 				`docker run -it -d -p 3000:3000 -v root/chat:/root/chat --name chat yisuren/chat`
 				
