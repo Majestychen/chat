@@ -54,7 +54,7 @@
 
 				http://hiltmon.com/blog/2015/08/09/c-plus-plus-11-on-centos-6-dot-6/  
 				`wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo`  
-				`yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++`  
+				`yum install -y devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++`  
 				`scl enable devtoolset-2 bash`  
 				`echo ". /opt/rh/devtoolset-2/enable" >> ~/.bash_profile`
 
@@ -73,7 +73,7 @@
 
 		* 三层关系
 
-			windows -> virtualbox 上的linux(boot2docker) -> 运行在linux上的docker container
+			windows -> virtualbox 上的linux虚拟机 -> 运行在linux上的docker container
 
 		* 文件如何映射
 
@@ -89,5 +89,16 @@
 			* 然后进行 vitualbox的linux和 docker container的映射
 
 				-v 参数， 宿主机目录 : docker容器目录  
-				`docker run -it -d -p 3000:3000 -v root/chat:/root/chat --name chat yisuren/chat`
+				`docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat`
+
+* 安装，运行
+
+	```
+	docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat
+	docker exec -it chat /bin/bash
+
+	# 使用gitBash连接boot2docker (gitBash对中文支持好)
+	docker-machine.exe ssh default
+	su
+	```
 				
