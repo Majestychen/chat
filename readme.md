@@ -81,7 +81,8 @@
 
 				启动virtualbox虚拟机，运行boot2docker  
 				在虚拟机的文件共享中设定共享 chat -> c:\gitWorkspace\chat  
-				然后到linux上进行mount `mount -t vboxsf chat /root/chat`  
+				然后到linux上进行mount命令  
+				`mount -t vboxsf chat /root/chat`  
 				注意chat 是一个名字，一放连着windows（在virtualbox中设定）  
 				另一方连着linux（通过mount命令执行）  
 				取消mount命令`umount -a`
