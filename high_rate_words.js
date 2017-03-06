@@ -1,3 +1,9 @@
 var nodejieba = require("nodejieba");
-var result = nodejieba.cut("南京市长江大桥!好姐姐，晚上约么？！");
+var path = require("path");
+
+nodejieba.load({
+	userDict: path.resolve(__dirname, 'dict', 'userdict.utf8')
+});
+
+var result = nodejieba.cut("好姐姐我是红掌拨清波牛牛牛哥哥一二三四五臂距离 男默女泪 ab爱爱c捅刀我暗刀");
 console.log(result);

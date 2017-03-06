@@ -9,6 +9,10 @@
 		由于希望给聊天增加词频统计功能，需要进行分词  
 		nodejieba正是一个较好的node分词工具。
 
+	* 参考
+
+		https://github.com/fxsjy/jieba
+
 	* 安装（centos）
 
 		* 需要先安装node-gyp
