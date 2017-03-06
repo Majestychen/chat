@@ -3,6 +3,16 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Chat</title>
+	<script src="./js/socket.io.js"></script>
+	<script>
+		var host = "192.168.99.100";
+		var socket = io.connect("http://" + host + ":3000");
+		socket.on("news", function(data){
+			console.log("News:", data);
+		});
+
+		socket.emit("from_client", "hello server !");
+	</script>
 </head>
 <body>
 	hello chat !!
