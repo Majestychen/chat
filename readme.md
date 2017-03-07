@@ -89,7 +89,6 @@
 				然后到linux上进行mount命令  
 				`mount -t vboxsf chat /root/chat`  
 				注意chat 只是一个名字，一方连着windows（在virtualbox中设定），另一方连着linux（通过mount命令设定）  
-				取消mount命令`umount -a`
 
 			* 然后进行 vitualbox的linux和 docker container的映射
 
@@ -103,7 +102,7 @@
 	docker-machine.exe ls
 	docker-machine.exe ssh default
 	# 切换root用户
-	su
+	sudo -i
 	# 启动docker container （如果每次关闭虚拟机都save status的话，再开虚拟机的时候docker container是已经启动的状态的）
 	docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat
 	# 进入docker 虚拟机
