@@ -1,6 +1,19 @@
+* 注意事项
+
+	* 不要试图在windows下安装nodejieba，设计到C++的编译，会有很多问题
+	* 不要试图将docker image push到 www.dockerhub.com上
+
+		由于网络原因速度会很慢，而且经常失败  
+		正确的做法是：从dockerhub pull下来centos:7，然后通过Dockerfile进行build
+
 * nodejs version
 
-	4.3.1
+	4.3.1  
+	4.5.0
+
+* Docker
+
+	参考 [Dockerfile](./Dockerfile)
 
 * nodejieba
 
@@ -30,11 +43,13 @@
 
 			* C++11 Compiler (node 0.12.1版本需要普通的c++就行，node > 4.x版本需要 c++ 11)
 
-				http://hiltmon.com/blog/2015/08/09/c-plus-plus-11-on-centos-6-dot-6/  
+				-http://hiltmon.com/blog/2015/08/09/c-plus-plus-11-on-centos-6-dot-6/  
 				`wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo`  
 				`yum install -y devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++`  
 				`scl enable devtoolset-2 bash`  
-				`echo ". /opt/rh/devtoolset-2/enable" >> ~/.bash_profile`
+				`echo ". /opt/rh/devtoolset-2/enable" >> ~/.bash_profile`-  
+
+				`yum install -y gcc-c++`
 
 			* node-gyp
 
@@ -44,33 +59,6 @@
 		* nodejieba
 
 			`npm install nodejieba`
-
-	* 安装（windows - gitBash） (失败)
-
-		* 开始nodejs为4.3.0，无法安装成功，后来看nodejieba在node 5.7.0下测试是能正常运行的，所以切换到node 5.7.0
-		* 首先安装 windows-nvm 来管理node的各个版本
-
-			https://github.com/coreybutler/nvm-windows  
-			安装要注意，不要安装到 c:\program files下，因为后续会因为路径中的空格导致很多问题  
-			我是安装在了 c:\software\nvm下面
-		* `nvm install 5.7.0`
-		* `nvm use 5.7.0`
-		* `npm install nodejieba --save-dev` 报错，可以看到，需要安装python
-
-			我安装的python 2.7.0
-		* `npm install nodejieba --save-dev` 继续报错，可以看到，需要安装 node-gyp
-
-			`npm install node-gyp --save-dev`
-		* `npm intall nodejieba --save-dev` 成功！
-		* 到此安装成功，但是实际使用报错
-
-			需要使用C++编译，官网上很多人都反映windows上编译有问题  
-			没有继续调查
-
-		* 最终该结论
-
-			安装失败  
-			由于windows上安装困难，最终决定在windows上用docker开发
 
 * windows上进行docker开发
 
@@ -135,3 +123,35 @@
 	* 访问
 
 		http://192.168.99.100:3000/
+
+
+------------
+
+### 这里是备份的内容（后续删除）
+
+* 安装（windows - gitBash） (失败)
+
+	* 开始nodejs为4.3.0，无法安装成功，后来看nodejieba在node 5.7.0下测试是能正常运行的，所以切换到node 5.7.0
+	* 首先安装 windows-nvm 来管理node的各个版本
+
+		https://github.com/coreybutler/nvm-windows  
+		安装要注意，不要安装到 c:\program files下，因为后续会因为路径中的空格导致很多问题  
+		我是安装在了 c:\software\nvm下面
+	* `nvm install 5.7.0`
+	* `nvm use 5.7.0`
+	* `npm install nodejieba --save-dev` 报错，可以看到，需要安装python
+
+		我安装的python 2.7.0
+	* `npm install nodejieba --save-dev` 继续报错，可以看到，需要安装 node-gyp
+
+		`npm install node-gyp --save-dev`
+	* `npm intall nodejieba --save-dev` 成功！
+	* 到此安装成功，但是实际使用报错
+
+		需要使用C++编译，官网上很多人都反映windows上编译有问题  
+		没有继续调查
+
+	* 最终该结论
+
+		安装失败  
+		由于windows上安装困难，最终决定在windows上用docker开发
