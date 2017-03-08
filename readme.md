@@ -54,7 +54,7 @@
 
 			`npm install nodejieba`
 
-* windows上进行docker开发 （概念）
+* windows上通过docker开发nodejs程序 （概念）
 
 	* 文件映射
 
@@ -77,7 +77,7 @@
 				-v 参数， 宿主机目录 : docker容器目录  
 				`docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat`
 
-* windows上进行docker开发 （操作手顺）
+* windows上通过docker开发nodejs程序 （操作手顺）
 
 	* DockerToolbox的安装
 
