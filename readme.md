@@ -1,6 +1,6 @@
 * 注意事项
 
-	* 不要试图在windows下安装nodejieba，设计到C++的编译，会有很多问题
+	* 不要试图在windows下安装nodejieba，涉及到C++的编译，会有很多问题
 	* 不要试图将docker image push到 www.dockerhub.com上
 
 		由于网络原因速度会很慢，而且经常失败  
@@ -43,12 +43,6 @@
 
 			* C++11 Compiler (node 0.12.1版本需要普通的c++就行，node > 4.x版本需要 c++ 11)
 
-				-http://hiltmon.com/blog/2015/08/09/c-plus-plus-11-on-centos-6-dot-6/  
-				`wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo`  
-				`yum install -y devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++`  
-				`scl enable devtoolset-2 bash`  
-				`echo ". /opt/rh/devtoolset-2/enable" >> ~/.bash_profile`-  
-
 				`yum install -y gcc-c++`
 
 			* node-gyp
@@ -60,7 +54,7 @@
 
 			`npm install nodejieba`
 
-* windows上进行docker开发
+* windows上进行docker开发 （概念）
 
 	* 文件映射
 
@@ -83,32 +77,40 @@
 				-v 参数， 宿主机目录 : docker容器目录  
 				`docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat`
 
-* 安装
+* windows上进行docker开发 （操作手顺）
 
-	```
-	# 使用gitBash连接boot2docker (gitBash对中文支持好)
-	docker-machine.exe ls
-	docker-machine.exe ssh default
-	# 切换root用户
-	sudo -i
-	# 启动docker container （如果每次关闭虚拟机都save status的话，再开虚拟机的时候docker container是已经启动的状态的）
-	docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat
-	# 进入docker 虚拟机
-	docker exec -it chat /bin/bash
+	* DockerToolbox的安装
 
-	# 到这里我们已经有了linux的环境
-	# 并且也设定好了windows和linux的文件映射
-	# 可以开始开发了
+		参照 http://yisuren.github.io
+
+	* 启动boot2docker虚拟机
+
+	* 设定boot2docker的文件共享 (optional)
+
+		1. virtualbox图形界面设定  
+		2. boot2docker中: `mount -t vboxfs chat /root/chat`
+
+	* 使用gitBash ssh进入boot2docker
+
+		gitBash对中文支持的比较好
+		```
+		docker-machine.exe ls  
+		docker-machine.exe ssh default
+		sudo -i # root
+		```
+
+	* Build image (optional)
+
+		docker build -f ./Dockerfile_dev -t chat_dev .
 
 
-	cd /root/chat
-	git pull
-	...
-	```
+	* 启动container & 进入
 
-	```
-	npm install -g nodemon forever
-	```
+		```
+		docker run --rm -it -d -v /root/chat:/root/chat -p 3000:3000 --name chat_dev chat_dev
+		docker exec -it chat_dev /bin/bash
+
+		```
 
 * 运行
 
@@ -123,35 +125,3 @@
 	* 访问
 
 		http://192.168.99.100:3000/
-
-
-------------
-
-### 这里是备份的内容（后续删除）
-
-* 安装（windows - gitBash） (失败)
-
-	* 开始nodejs为4.3.0，无法安装成功，后来看nodejieba在node 5.7.0下测试是能正常运行的，所以切换到node 5.7.0
-	* 首先安装 windows-nvm 来管理node的各个版本
-
-		https://github.com/coreybutler/nvm-windows  
-		安装要注意，不要安装到 c:\program files下，因为后续会因为路径中的空格导致很多问题  
-		我是安装在了 c:\software\nvm下面
-	* `nvm install 5.7.0`
-	* `nvm use 5.7.0`
-	* `npm install nodejieba --save-dev` 报错，可以看到，需要安装python
-
-		我安装的python 2.7.0
-	* `npm install nodejieba --save-dev` 继续报错，可以看到，需要安装 node-gyp
-
-		`npm install node-gyp --save-dev`
-	* `npm intall nodejieba --save-dev` 成功！
-	* 到此安装成功，但是实际使用报错
-
-		需要使用C++编译，官网上很多人都反映windows上编译有问题  
-		没有继续调查
-
-	* 最终该结论
-
-		安装失败  
-		由于windows上安装困难，最终决定在windows上用docker开发
