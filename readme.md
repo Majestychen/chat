@@ -114,14 +114,21 @@
 
 * 运行
 
-	* 启动
+	* 启动boot2docker虚拟机
 
+	* 进入boot2docker
+
+		docker-machine.exe ls  
+		docker-machine.exe ssh default
+
+	* build image & 进入container & 启动服务
+
+		cd /root/chat  
+		sh docker_start_dev.sh # 执行后直接进入container中  
+		cd /root/chat  
 		nodemon server.js
-
-	* 查看boot2docker的ip地址
-
-		docker-machine.exe ls
 
 	* 访问
 
+		docker-machine.exe ls # 查看ip地址  
 		http://192.168.99.100:3000/
