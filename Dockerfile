@@ -1,28 +1,50 @@
 FROM centos:7
 
-ENV SOURCE_DIR /root/chat/
+ENV SOURCE_DIR /root/pic_inch
 
-# install wget
-RUN yum install -y wget
+# set system time zone to CHINA
+RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-# suport epel repo for centos7
-RUN wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
-RUN rpm -ivh epel-release-7-9.noarch.rpm
+# SET DIR COLOR
+RUN cp /etc/DIR_COLORS ~/.dir_colors \
+	&& sed -i "s/DIR 01;34/DIR 01;33/" ~/.dir_colors
 
-# install nodejs 4.5.0 & npm
-RUN yum install -y libicu libuv
-RUN rpm -ivh http://mirrors.163.com/centos/7/opstools/x86_64/common/nodejs-4.5.0-1.el7.x86_64.rpm
+# install node npm by NVM
+ENV NVM_DIR /root/.nvm
+ENV NODE_VERSION 4.3.1
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash \
+    && source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# EPEL SUPPORT: http://elrepo.org/tiki/tiki-index.php
+RUN rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+RUN rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+
 
 # install
 RUN yum install -y git make python gcc-c++
 
-# copy source
-RUN mkdir -p $SOURCE_DIR
-COPY ./* $SOURCE_DIR
-
 # npm install (global)
-RUN npm install -g node-gyp forever
+RUN echo "registry=https://registry.npm.taobao.org" >> ~/.npmrc
 
-# npm install
-WORKDIR $SOURCE_DIR
+# PM2 install
+RUN npm install -g pm2 node-gyp
+
+# Prepare dir
+RUN mkdir -p $SOURCE_DIR
+WORKDIR $SOURCE_DIR/
+
+# COPY package.json & NPM INSTALL
+COPY ./package.json $SOURCE_DIR/package.json
 RUN npm install
+
+# COPY source
+COPY . $SOURCE_DIR/
+
+# webpack code package
+RUN npm run product
