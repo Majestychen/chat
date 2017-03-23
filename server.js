@@ -11,19 +11,64 @@ app.use(koaStatic(path.resolve(__dirname, ".")));
 var server = require('http').createServer(app.callback());
 var io = require('socket.io')(server);
 
-io.on("connection", function(socket){
 
-	console.log("get one connection ...");
-	
-	socket.on("from_client", function(clinetData){
-		console.log("get message from client:", clinetData);
-		socket.emit("news", "hello client !");
+var socketMap = {};
+
+io.on("connection", function(socket) {
+
+	var savedSocket = socketMap[socket];
+	if (!savedSocket || savedSocket.status != 'authed') {
+		socket.emit("msg", {
+			type: "system",
+			msg: "欢迎，请认证身份"
+		});
+	} else {
+		socket.emit("msg", {
+			type: "system",
+			msg: "您现在可以开始聊天啦"
+		});
+	}
+
+	socket.on("msg", function(msg) {
+		if (_isAuth()) {
+			socketMap[socket] = {
+				status: 'authed'
+			}
+		} else {
+			var sockets = _getAuthedSockets(socket);
+			sockets.forEach((s) => {
+				s.emit("msg", {
+					type: "msg",
+					msg: msg
+				})
+			})
+		}
 	})
 
-	socket.on("disconnect", function(){
-		console.log("disconnect one connection ...");
-	})
-})
+
+});
+
+
+function _isAuth(msg) {
+	return msg == "123456"
+}
+
+function _getAuthedSockets(myselfSocket) {
+
+	var resultArr = [];
+	for (var key in socketMap) {
+		if (key.status == 'authed') {
+
+			// 如果参数传递了自身的socket，那么排除自己
+			if (myselfSocket && myselfSocket == socket) {
+				continue;
+			}
+
+			resultArr.push(key);
+		}
+	}
+	return resultArr;
+}
 
 server.listen(3000, function() {
 	console.log("chat server start on port [3000] ...");
