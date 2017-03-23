@@ -5,22 +5,29 @@ $(function(){
 	init();
 	bindEvent();
 
-	console.log("aaaaaaaa");
 	function bindEvent(){
 		$("#send").on("click", function(){
-			console.log("cccccccccccccccc");
-			var msg = $(".input_area input[type='text']").val();
-			addMsg(msg);
-			emit(msg);
+			$text = $(".input_area input[type='text']");
+			var msgValue = $text.val();
+			var msg = {
+				type: "msg",
+				msg: msgValue
+			}
+			$text.val("");
+
+			_addMsg(msg);
+			_emit(msgValue);
 		});
 	}
 
-	function addMsg(msg){
-		console.log(msg);
-		$("<div class='msg'></div>").html(msg).appendTo($(".content_area"));
+	function _addMsg(msg){
+		var $contentArea = $(".content_area");
+		var className = msg.type;
+		var msgContent = msg.msg;
+		$("<div class='line'></div>").html(msgContent).addClass(className).appendTo($contentArea);
 	}
 
-	function emit(msg){
+	function _emit(msg){
 		socket.emit("msg", msg);
 	}
 
@@ -30,5 +37,8 @@ $(function(){
 		var host = "127.0.0.1"
 		socket = io("http://" + host + ":3000");
 
+		socket.on("msg", function(msg){
+			_addMsg(msg);
+		});
 	}
 })
