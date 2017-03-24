@@ -6,6 +6,7 @@
 	<title>Chat</title>
 	<script src="./js/lib/socket.io.js"></script>
 	<script src="./js/lib/jquery-2.2.4.min.js"></script>
+	<script src="./js/lib/jquery.cookie.js"></script>
 	<script src="./js/index.js"></script>
 	<link crossorigin="anonymous" href="./css/normalize.css" rel="stylesheet" />
 	<style>
@@ -32,6 +33,14 @@
 	}
 	.line {
 		color: black;
+		margin-bottom: 5px;
+		padding: 5px;
+	}
+	.line.male {
+		background-color: #d5eaf2;
+	}
+	.line.female {
+		background-color: #f5d7dc;
 	}
 	.line.sending {
 		color: gray;
@@ -39,6 +48,7 @@
 	.line.system {
 		color: gray;
 		font-style: italic;
+		background-color: transparent;
 	}
 
 	</style>

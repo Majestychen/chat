@@ -61,7 +61,7 @@ function initSocketMsg(socket){
 		}
 
 		// 设定role
-		if (_isRole(msg)){
+		if (_isRole(msg)) {
 			var role = msg.split(":")[1];
 			socketMap[socket.id].role = role;
 			return;
@@ -78,9 +78,10 @@ function initSocketMsg(socket){
 		});
 		// 消息广播
 		var sockets = _getAuthedSockets(socket);
+		var role = socketMap[socket.id].role || 'female';
 		sockets.forEach((s) => {
 			s.emit("msg", {
-				type: "msg",
+				type: "msg " + role,
 				msg: msg
 			})
 		})
@@ -136,7 +137,7 @@ function _authOk(socket){
 		}
 	}
 	socket.emit("msg", {
-		type: "system",
+		type: "system authed",
 		msg: "认证成功，您现在可以开始聊天啦~"
 	});
 	socket.emit("msg", {
@@ -148,7 +149,7 @@ function _authOk(socket){
 	sockets.forEach((s) => {
 		s.emit("msg", {
 			type: "system",
-			msg: "期待的人进入了聊天室，当前在线人数：" + authedCount
+			msg: "有人进入了聊天，当前在线人数：" + authedCount
 		});
 	})
 }
