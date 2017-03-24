@@ -1,11 +1,16 @@
 var path = require("path");
 
+// KOA
 var Koa = require("koa");
 var app = new Koa();
-
-// 静态文件支持
 var koaStatic = require("koa-static");
-app.use(koaStatic(path.resolve(__dirname, ".")));
+app.use(koaStatic(path.resolve(__dirname, "..")));
+
+// MONGO DB
+var db = require("./mongo.js");
+var mongoose = require("mongoose");
+var conn = db.init();
+var Log = conn.model("log");
 
 // socket支持
 var server = require('http').createServer(app.callback());
@@ -31,13 +36,14 @@ io.on("connection", function(socket) {
 });
 
 function initSocket(socket){
-	socket.on("msg", function(msg) {
+	socket.on("msg", function(msg, ackFn) {
 
 		// 身份认证
 		if(_isAuth(msg)){
 			socketMap[socket] = {
 				status: "authed"
 			}
+			console.log(socketMap);
 			_authOk(socket);
 		}
 
@@ -54,6 +60,14 @@ function initSocket(socket){
 		}
 
 		// 普通消息
+		// 消息保存
+		Log.add({
+			msg: msg,
+			role: socketMap[socket].role || "none",
+		}, function(_id){
+			ackFn(_id);
+		});
+		// 消息广播
 		var sockets = _getAuthedSockets(socket);
 		sockets.forEach((s) => {
 			s.emit("msg", {
@@ -80,9 +94,19 @@ function _checkAuth(socket){
 }
 
 function _authOk(socket){
+	var authedCount = 0;
+	for(var key in socketMap){
+		if(socketMap[key].status == "authed"){
+			authedCount++;
+		}
+	}
 	socket.emit("msg", {
 		type: "system",
 		msg: "认证成功，您现在可以开始聊天啦~"
+	});
+	socket.emit("msg", {
+		type: "system",
+		msg: "当前在线人数: " + authedCount
 	});
 }
 
@@ -98,10 +122,10 @@ function _getAuthedSockets(myselfSocket) {
 
 	var resultArr = [];
 	for (var key in socketMap) {
-		if (key.status == 'authed') {
+		if (socketMap[key].status == 'authed') {
 
 			// 如果参数传递了自身的socket，那么排除自己
-			if (myselfSocket && myselfSocket == socket) {
+			if (myselfSocket && myselfSocket == key) {
 				continue;
 			}
 
