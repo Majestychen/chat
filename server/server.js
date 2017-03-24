@@ -32,18 +32,26 @@ io.on("connection", function(socket) {
 	// 已经认证的话，表示欢迎信息
 	_authOk(socket);
 
-
 });
 
 function initSocket(socket){
+
+	// socket.on('msg' ...)
+	initSocketMsg(socket);
+
+	// socket.on('disconnect' ...)
+	initSocketDisConnect(socket);
+}
+
+function initSocketMsg(socket){
 	socket.on("msg", function(msg, ackFn) {
 
 		// 身份认证
 		if(_isAuth(msg)){
-			socketMap[socket] = {
+			socketMap[socket.id] = {
+				socket: socket,
 				status: "authed"
 			}
-			console.log(socketMap);
 			_authOk(socket);
 		}
 
@@ -55,7 +63,7 @@ function initSocket(socket){
 		// 设定role
 		if (_isRole(msg)){
 			var role = msg.split(":")[1];
-			socketMap[socket].role = role;
+			socketMap[socket.id].role = role;
 			return;
 		}
 
@@ -63,8 +71,9 @@ function initSocket(socket){
 		// 消息保存
 		Log.add({
 			msg: msg,
-			role: socketMap[socket].role || "none",
+			role: socketMap[socket.id].role || "none",
 		}, function(_id){
+			// Db登陆成功，返回db中的_id
 			ackFn(_id);
 		});
 		// 消息广播
@@ -78,10 +87,36 @@ function initSocket(socket){
 	})
 }
 
+function initSocketDisConnect(socket){
+
+	socket.on("disconnect", function(){
+		var socketId = socket.id;
+		var socketInfo = socketMap[socketId];
+		
+		if(!socketInfo){
+			return
+		}
+
+		var isAuthed = socketInfo.status == "authed";
+		var role = _getRoleName(socketInfo.role);
+		if(isAuthed){
+			var sockets = _getAuthedSockets(socket);
+			sockets.forEach((s) => {
+				s.emit("msg", {
+					type: "system",
+					msg: role + "离开了..."
+				})
+			})
+		}
+		delete socketMap[socketId];
+	});
+
+}
+
 function _checkAuth(socket){
 
-	var savedSocket = socketMap[socket];
-	if (!savedSocket || savedSocket.status != 'authed') {
+	var socketInfo = socketMap[socket.id];
+	if (!socketInfo || socketInfo.status != 'authed') {
 		socket.emit("msg", {
 			type: "system",
 			msg: "欢迎，请认证身份"
@@ -108,6 +143,14 @@ function _authOk(socket){
 		type: "system",
 		msg: "当前在线人数: " + authedCount
 	});
+
+	var sockets = _getAuthedSockets(socket);
+	sockets.forEach((s) => {
+		s.emit("msg", {
+			type: "system",
+			msg: "期待的人进入了聊天室，当前在线人数：" + authedCount
+		});
+	})
 }
 
 function _isAuth(msg) {
@@ -122,17 +165,22 @@ function _getAuthedSockets(myselfSocket) {
 
 	var resultArr = [];
 	for (var key in socketMap) {
-		if (socketMap[key].status == 'authed') {
+		var socketInfo = socketMap[key];
+		if (socketInfo.status == 'authed') {
 
 			// 如果参数传递了自身的socket，那么排除自己
-			if (myselfSocket && myselfSocket == key) {
+			if (myselfSocket && myselfSocket.id == socketInfo.socket.id) {
 				continue;
 			}
 
-			resultArr.push(key);
+			resultArr.push(socketInfo.socket);
 		}
 	}
 	return resultArr;
+}
+
+function _getRoleName(role){
+	return role == "male" ? "男士" : "女士";
 }
 
 server.listen(3000, function() {

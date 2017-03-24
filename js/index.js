@@ -32,7 +32,7 @@ $(function() {
 		var $text = $(".input input[type='text']");
 		var msgValue = $text.val();
 		var msg = {
-			type: "msg",
+			type: "msg sending",
 			msg: msgValue
 		}
 		$text.val("");
@@ -57,7 +57,6 @@ $(function() {
 		$div
 			.html(msgContent)
 			.addClass(className)
-			.addClass("sending")
 			.appendTo($contentArea);
 
 		$div[0].scrollIntoView();
