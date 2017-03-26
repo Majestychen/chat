@@ -10,7 +10,8 @@ $(function() {
 	function init() {
 
 		// var host = "192.168.99.103";
-		var host = "192.168.196.184"
+		// var host = "192.168.196.184"
+		var host = window.location.hostname;
 		socket = io("http://" + host + ":3000");
 
 		_setRole(socket);
@@ -43,12 +44,18 @@ $(function() {
 	function _sendMsg() {
 		var $text = $(".input input[type='text']");
 		var msgValue = $text.val();
+		msgValue = msgValue.trim();
+		if(!msgValue || msgValue == ""){
+			return;
+		}
+
 		var role = $.cookie("role") || "female";
 		var msg = {
 			type: "msg sending " + role,
 			msg: msgValue
 		}
 		$text.val("");
+		$text.focus();
 
 		var $msgDiv = _addMsg(msg);
 		_emit(msgValue, $msgDiv);
