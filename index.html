@@ -7,26 +7,60 @@
 	<script src="./js/lib/socket.io.js"></script>
 	<script src="./js/lib/jquery-2.2.4.min.js"></script>
 	<script src="./js/lib/jquery.cookie.js"></script>
+	<script src="./js/lib/autosize.js"></script>
 	<script src="./js/index.js"></script>
 	<link crossorigin="anonymous" href="./css/normalize.css" rel="stylesheet" />
 	<style>
 	* {
-		font-family: "微软雅黑"
+		font-family: "微软雅黑";
+		box-sizing: border-box;
 	}
+	html, body {
+		width: 100%;
+	}
+
+	button {  
+		font-weight: bold;  
+		color: #fff;  
+		text-shadow:1px 1px 1px #333;  
+		border-radius: 5px;  
+		position: relative;  
+		overflow: hidden;
+		line-height: 25px;
+	}
+
+	button.blue{  
+		border:1px solid #1e7db9;  
+		box-shadow: 0 1px 2px #8fcaee inset,0 -1px 0 #497897 inset,0 -2px 3px #8fcaee inset;  
+		background: -webkit-linear-gradient(top,#42a4e0,#2e88c0);  
+		background: -moz-linear-gradient(top,#42a4e0,#2e88c0);  
+		background: linear-gradient(top,#42a4e0,#2e88c0);  
+	}
+
+	button.male {
+		background-color: #d5eaf2;
+	}
+	button.female {
+		background-color: #f5d7dc;
+		margin-left: 10px;
+	}
+
 	.top {
-		position:fixed;
+		position:absolute;
 		bottom:40px;
 		top: 0px;
-		left: 0px;
-		right: 0px;
+		width: 100%;
 		overflow: auto;
+		padding: 5px;
 	}
 	.bottom {
-		position: fixed;
+		position: absolute;
 		bottom: 0px;
 		left: 0px;
 		width: 100%;
 		height: 40px;
+		padding: 5px;
+		border-top: 2px solid aliceblue;
 	}
 	.content_area {
 		width: 100%;
@@ -43,12 +77,21 @@
 		background-color: #f5d7dc;
 	}
 	.line.sending {
-		color: gray;
+		color: #b3b1b1;
 	}
 	.line.system {
 		color: gray;
 		font-style: italic;
 		background-color: transparent;
+	}
+
+	textarea {
+		vertical-align: middle;
+		border-top: none;
+		border-left:none;
+		border-right: none;
+		outline:none;
+		line-height: 25px;
 	}
 
 	</style>
@@ -60,8 +103,12 @@
 	</div>
 	<div class="bottom">
 		<div class="input">
-			<input type="text">
-			<button type="button" id="send">发送</button>
+			<div style="float:right;width: 100px;text-align:center">
+				<button type="button" id="send" style="width: 80px" class="blue">发送</button>
+			</div>
+			<div style="width:auto;overflow-x:hidden">
+				<textarea name="" id="" cols="30" rows="1" style="max-height: 100px;width:100%"></textarea>
+			</div>
 		</div>
 	</div>
 </body>

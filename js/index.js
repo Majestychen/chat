@@ -4,10 +4,11 @@ $(function() {
 
 	var socket = null;
 
-	init();
+	initSocket();
+	initDom();
 	bindEvent();
 
-	function init() {
+	function initSocket() {
 
 		// var host = "192.168.99.103";
 		// var host = "192.168.196.184"
@@ -28,10 +29,15 @@ $(function() {
 
 	}
 
+	function initDom(){
+		// 使用autosize插件，让textarea自动高度
+		autosize($("textarea"));
+	}
+
 	function bindEvent() {
 		$(".input button[type='button']").on("click", _sendMsg);
 		$(".input").keypress(function(e) {
-			if (e.which == 13) {
+			if ((e.keyCode == 13  || e.keyCode == 10) && e.ctrlKey) {
 				_sendMsg();
 			}
 		})
@@ -42,8 +48,8 @@ $(function() {
 	// 自己发送的消息， 直接表示，同时发送到服务器
 	// 自己发送的消息， 先表示为灰色，服务器接收后ack回来，再变成正常颜色
 	function _sendMsg() {
-		var $text = $(".input input[type='text']");
-		var msgValue = $text.val();
+		var $ta = $("textarea");
+		var msgValue = $ta.val();
 		msgValue = msgValue.trim();
 		if(!msgValue || msgValue == ""){
 			return;
@@ -54,8 +60,9 @@ $(function() {
 			type: "msg sending " + role,
 			msg: msgValue
 		}
-		$text.val("");
-		$text.focus();
+		$ta.val("");
+		autosize.update($ta);
+		$ta.focus();
 
 		var $msgDiv = _addMsg(msg);
 		_emit(msgValue, $msgDiv);
@@ -72,6 +79,8 @@ $(function() {
 			// 认证密码输入，不显示
 			return;
 		}
+
+		msgContent = msgContent.replace(/\n|(\r\n)/g, "<br/>");
 
 		var $contentArea = $(".content_area");
 		var $div = $("<div class='line'></div>");
