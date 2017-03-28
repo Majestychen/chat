@@ -6,7 +6,8 @@ $(function() {
 
 	initSocket();
 	initTextarea();
-	bindEvent();
+	initEmotionBtn();
+	initSendBtn();
 
 	function initSocket() {
 
@@ -44,14 +45,20 @@ $(function() {
 		})
 	}
 
-	function bindEvent() {
-		$(".input button[type='button']").on("click", _sendMsg);
-		$(".input").keypress(function(e) {
+	function initSendBtn() {
+		$("#send").on("click", _sendMsg);
+		$("div.input").keypress(function(e) {
 			if ((e.keyCode == 13  || e.keyCode == 10) && e.ctrlKey) {
 				_sendMsg();
 			}
 		})
 
+	}
+
+	function initEmotionBtn(){
+		$("button.emotion").emotion({
+			input: $("textarea")
+		});
 	}
 
 	// 发送消息
