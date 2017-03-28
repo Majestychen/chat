@@ -5,7 +5,7 @@ $(function() {
 	var socket = null;
 
 	initSocket();
-	initDom();
+	initTextarea();
 	bindEvent();
 
 	function initSocket() {
@@ -29,9 +29,19 @@ $(function() {
 
 	}
 
-	function initDom(){
+	function initTextarea(){
 		// 使用autosize插件，让textarea自动高度
 		autosize($("textarea"));
+
+		$(document).on("autosize:resized", function(){
+			var taHeight = $("textarea").height();
+			var bottomHeight = taHeight + 10;
+			$(".bottom").height(bottomHeight + "px");
+			$(".top").css({
+				"bottom": bottomHeight + "px"
+			});
+			_scrollIntoView();
+		})
 	}
 
 	function bindEvent() {
@@ -89,7 +99,7 @@ $(function() {
 			.addClass(className)
 			.appendTo($contentArea);
 
-		$div[0].scrollIntoView();
+		_scrollIntoView();
 
 		return $div;
 	}
@@ -114,6 +124,13 @@ $(function() {
 				$("div.role").remove();
 				$.cookie("role", role, {expires: 365});
 			});
+		}
+	}
+
+	function _scrollIntoView(){
+		var $div = $(".content_area .line:last")[0];
+		if($div){
+			$div.scrollIntoView();
 		}
 	}
 })
