@@ -1,5 +1,13 @@
 'use strict'
 
+// require("./lib/jquery-2.2.4.js");
+// require("./lib/jquery.cookie.js");
+// require("./lib/autosize.js");
+// require("./lib/socket.io.js");
+// require("./common.js");
+// require("./jqSelection.js");
+// require("./emotion.js");
+
 $(function() {
 
 	var socket = null;

@@ -1,6 +1,6 @@
 * 注意事项
 
-	* 不要试图在windows下安装nodejieba，涉及到C++的编译，会有很多问题
+	* 不要试图在windows下安装nodejieba，涉及到C++的编译，会有很多问题，看命了~
 	* 不要试图将docker image push到 www.dockerhub.com上
 
 		由于网络原因速度会很慢，而且经常失败  
@@ -10,6 +10,19 @@
 
 	4.3.1  
 	4.5.0
+
+* 启动(dev)
+
+	* 开发
+
+		nodemon server/server.js  
+		http://localhost:3005/index_dev.html
+
+	* 产品
+
+		npm run product  
+		NODE_ENV=product pm2 start --name chat server/server.js  
+		http://your_ip_address:3005
 
 * Docker
 

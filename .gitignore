@@ -2,3 +2,5 @@ node_modules
 npm-debug.log
 error.log
 npm-debug*
+dist/bundle.js
+build
