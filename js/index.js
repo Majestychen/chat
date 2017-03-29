@@ -12,7 +12,7 @@ $(function() {
 	function initSocket() {
 
 		var host = window.location.hostname;
-		socket = io("http://" + host + ":3000");
+		socket = io("http://" + host + ":3005");
 
 		_setRole(socket);
 

@@ -16,13 +16,13 @@
 	* 开发
 
 		nodemon server/server.js  
-		http://localhost:3000/index_dev.html
+		http://localhost:3005/index_dev.html
 
 	* 产品
 
 		npm run product  
 		NODE_ENV=product pm2 start --name chat server/server.js  
-		http://your_ip_address:3000
+		http://your_ip_address:3005
 
 * Docker
 
@@ -88,7 +88,7 @@
 			* 然后进行 vitualbox的linux和 docker container的映射
 
 				-v 参数， 宿主机目录 : docker容器目录  
-				`docker run -it -d -p 3000:3000 -v /root/chat:/root/chat --name chat yisuren/chat`
+				`docker run -it -d -p 3005:3005 -v /root/chat:/root/chat --name chat yisuren/chat`
 
 * windows上通过docker开发nodejs程序 （操作手顺）
 
@@ -120,7 +120,7 @@
 	* 启动container & 进入
 
 		```
-		docker run --rm -it -d -v /root/chat:/root/chat -p 3000:3000 --name chat_dev chat_dev
+		docker run --rm -it -d -v /root/chat:/root/chat -p 3005:3005 --name chat_dev chat_dev
 		docker exec -it chat_dev /bin/bash
 
 		```
@@ -144,4 +144,4 @@
 	* 访问
 
 		docker-machine.exe ls # 查看ip地址  
-		http://192.168.99.100:3000/
+		http://192.168.99.100:3005/
