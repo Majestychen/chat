@@ -11,7 +11,7 @@ RUN cp /etc/DIR_COLORS ~/.dir_colors \
 
 # install node npm by NVM
 ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 4.3.1
+ENV NODE_VERSION 7.0.0
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash \
     && source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
