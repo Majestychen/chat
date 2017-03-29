@@ -16,6 +16,10 @@ var Log = conn.model("log");
 var server = require('http').createServer(app.callback());
 var io = require('socket.io')(server);
 
+// password
+var fs = require("fs");
+var password = fs.readFileSync(path.resolve(__dirname, "..", "password.txt")).toString().trim();
+console.log("[password]", password);
 
 var socketMap = {};
 
@@ -156,7 +160,7 @@ function _authOk(socket){
 }
 
 function _isAuth(msg) {
-	return msg == "123456"
+	return msg == password
 }
 
 function _isRole(msg){
