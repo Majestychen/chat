@@ -1,6 +1,6 @@
 FROM centos:7
 
-ENV SOURCE_DIR /root/pic_inch
+ENV SOURCE_DIR /root/chat
 
 # set system time zone to CHINA
 RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -33,7 +33,7 @@ RUN yum install -y git make python gcc-c++
 RUN echo "registry=https://registry.npm.taobao.org" >> ~/.npmrc
 
 # PM2 install
-RUN npm install -g pm2 node-gyp
+RUN npm install -g grunt-cli pm2 node-gyp
 
 # Prepare dir
 RUN mkdir -p $SOURCE_DIR

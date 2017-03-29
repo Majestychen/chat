@@ -16,13 +16,13 @@
 	* 开发
 
 		nodemon server/server.js  
-		http://localhost:3005/index_dev.html
+		http://localhost:3000/index_dev.html
 
 	* 产品
 
 		npm run product  
 		NODE_ENV=product pm2 start --name chat server/server.js  
-		http://your_ip_address:3005
+		http://your_ip_address:3000
 
 * Docker
 
