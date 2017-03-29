@@ -46,10 +46,15 @@ $(function() {
 	}
 
 	function initSendBtn() {
-		$("#send").on("click", _sendMsg);
+		function _doSendMsg(e){
+			_sendMsg();
+			$("div.emotion.popup").hide();
+		}
+
+		$("#send").on("click", _doSendMsg);
 		$("div.input").keypress(function(e) {
 			if ((e.keyCode == 13  || e.keyCode == 10) && e.ctrlKey) {
-				_sendMsg();
+				_doSendMsg(e);
 			}
 		})
 
@@ -75,6 +80,7 @@ $(function() {
 		var role = $.cookie("role") || "female";
 		var msg = {
 			type: "msg sending " + role,
+			time: new Date().getTime(),
 			msg: msgValue
 		}
 		$ta.val("");
@@ -88,27 +94,77 @@ $(function() {
 	// 显示消息： 自己发送的 + 从服务器接收的
 	function _addMsg(msg) {
 
-		var className = msg.type;
+		// 认证密码输入，不显示
 		var msgContent = msg.msg;
-
-		msgContent = msgContent.trim();
 		if (/^\d{6,6}$/.test(msgContent) === true) {
-			// 认证密码输入，不显示
 			return;
 		}
+		
+		var $contentArea = $(".content_area");
+		var $lineDiv = _getLineDiv(msg);
+		$lineDiv.appendTo($contentArea);
 
+		_scrollIntoView();
+
+		return $lineDiv;
+	}
+
+	function _getLineDiv(msg){
+
+		var className = msg.type;
+		var msgContent = msg.msg;
+		var unixtime = msg.time;
+
+		// 换行的处理
 		msgContent = msgContent.replace(/\n|(\r\n)/g, "<br/>");
 
-		var $contentArea = $(".content_area");
+		// 表情符号的处理
+		var reg = new RegExp("\\[(.*?)\\]", "g");
+		var matchResult = null;
+		while(matchResult = reg.exec(msgContent)){
+			console.log(matchResult);
+			if(matchResult == null){
+				break;
+			}
+
+			var infoStr = matchResult[1];
+			var infoArr = infoStr.split("_");
+			var imgName = infoArr[0];
+			var x = infoArr[1];
+			var y = infoArr[2];
+
+			var imgInfo = window.emotions[imgName];
+			var imgPath = imgInfo.imgPath;
+			var singleSizeW = imgInfo.singleSizeW;
+			var singleSizeH = imgInfo.singleSizeH;
+			var posx = x * singleSizeW * -1;
+			var posy = y * singleSizeH * -1;
+
+			var bg = "white url('{0}') {1}px {2}px".format(imgPath, posx, posy);
+			var imgStr = '<span class="emotion" style="display:inline-block;width:{0}px;height:{1}px;background:{2}"></span>'
+			imgStr = imgStr.format(singleSizeW, singleSizeH, bg);
+			msgContent = msgContent.replace(new RegExp("\\["+infoStr+"\\]", "g"), imgStr);
+		}
+
+
 		var $div = $("<div class='line'></div>");
 		$div
 			.html(msgContent)
 			.addClass(className)
-			.appendTo($contentArea);
-
-		_scrollIntoView();
-
+			.attr("unixtime", unixtime);
 		return $div;
+	}
+
+	function _addTimeLine($lineDiv) {
+		var unixtime = $lineDiv.attr("unixtime");
+		var formatTime = new Date(unixtime).getFormatOutput();
+		$('<div class="line system"></div>')
+			.html(formatTime)
+			.css({
+				"text-align": "center"
+			})
+			.insertBefore($lineDiv)
+			.get(0).scrollIntoView();
 	}
 
 	function _emit(msg, $div) {
