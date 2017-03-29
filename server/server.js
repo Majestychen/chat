@@ -53,6 +53,7 @@ function initSocketMsg(socket){
 				status: "authed"
 			}
 			_authOk(socket);
+			return;
 		}
 
 		// 检查身份认证
