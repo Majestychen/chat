@@ -4,3 +4,5 @@ error.log
 npm-debug*
 dist/bundle.js
 build
+*.log
+password.txt
