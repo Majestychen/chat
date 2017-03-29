@@ -6,3 +6,4 @@ dist/bundle.js
 build
 *.log
 password.txt
+log
