@@ -4,10 +4,11 @@ var ObjectId = mongoose.ObjectId;
 
 
 var dbName = process.env == "product" ? "chat" : "chat_dev"
+var hostName = process.env == "product" ? "db" : "localhost"
 
 function init() {
 
-	var conn = mongoose.createConnection("mongodb://localhost/" + dbName);
+	var conn = mongoose.createConnection("mongodb://" + hostName + "/" + dbName);
 	conn.on("error", (err) => console.log("connection error, ", err));
 	defineSchema(conn);
 	return conn;

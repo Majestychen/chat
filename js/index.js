@@ -1,13 +1,5 @@
 'use strict'
 
-// require("./lib/jquery-2.2.4.js");
-// require("./lib/jquery.cookie.js");
-// require("./lib/autosize.js");
-// require("./lib/socket.io.js");
-// require("./common.js");
-// require("./jqSelection.js");
-// require("./emotion.js");
-
 $(function() {
 
 	var socket = null;
@@ -19,8 +11,6 @@ $(function() {
 
 	function initSocket() {
 
-		// var host = "192.168.99.103";
-		// var host = "192.168.196.184"
 		var host = window.location.hostname;
 		socket = io("http://" + host + ":3000");
 

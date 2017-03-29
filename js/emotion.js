@@ -22,7 +22,7 @@ $(function() {
 		var $baseDom = $(this);
 
 		initPopSelect($input);
-		initButton($baseDom);
+		initButton($baseDom, $input);
 		registToGlobal();
 	};
 
@@ -55,11 +55,13 @@ $(function() {
 		}
 	}
 
-	function initButton($baseDom){
+	function initButton($baseDom, $input){
 		$baseDom.on("click", function(){
 			var className = "emotion_" + imgName;
 			var $popSelect = $("." + className);
 			$popSelect.toggle();
+
+			$input.focus();
 		});
 	}
 
