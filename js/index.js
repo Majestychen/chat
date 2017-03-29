@@ -69,7 +69,7 @@ $(function() {
 	}
 
 	function initEmotionBtn(){
-		$("button.emotion").emotion({
+		$(".button.emotion").emotion({
 			input: $("textarea")
 		});
 	}

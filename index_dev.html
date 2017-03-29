@@ -13,6 +13,7 @@
 	<script src="./js/emotion.js"></script>
 	<script src="./js/index.js"></script>
 	<link crossorigin="anonymous" href="./css/normalize.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="./css/iconfont.css">
 	<style>
 	* {
 		font-family: "微软雅黑";
@@ -22,7 +23,7 @@
 		width: 100%;
 	}
 
-	button {
+/*	button {
 		font-weight: bold;  
 		color: #fff;  
 		text-shadow:1px 1px 1px #333;  
@@ -39,6 +40,16 @@
 		background: -webkit-linear-gradient(top,#42a4e0,#2e88c0);  
 		background: -moz-linear-gradient(top,#42a4e0,#2e88c0);  
 		background: linear-gradient(top,#42a4e0,#2e88c0);  
+	}*/
+
+	.button {
+		cursor:pointer;
+		border: 1px solid gray;
+		border-radius: 5px;
+		padding: 5px;
+		display:inline-block;
+		vertical-align: middle;
+		width: 70px;
 	}
 
 	button.male {
@@ -98,10 +109,6 @@
 		line-height: 25px;
 	}
 
-	.bottom {
-		border: 1px solid red;
-	}
-
 	div.emotion.popup {
 		position: absolute;
 		top: 0px;
@@ -129,11 +136,12 @@
 	</div>
 	<div class="bottom">
 		<div class="input">
-			<div style="float:right;width: 100px;text-align:center">
-				<button type="button" id="send" style="width: 80px" class="blue">发送</button>
+
+			<div style="float:right;width: 80px;text-align:center">
+				<span id="send" class="button iconfont icon-iconfontmailsend"></span>
 			</div>
-			<div style="float:right;width: 100px;text-align:center">
-				<button type="button" style="width: 80px" class="emotion blue">表情</button>
+			<div style="float:right;width: 80px;text-align:center">
+				<span class="button iconfont icon-smile emotion"></span>
 			</div>
 			<div style="width:auto;overflow-x:hidden">
 				<textarea name="" id="" cols="30" rows="1" style="max-height: 100px;width:100%"></textarea>
