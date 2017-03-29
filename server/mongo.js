@@ -18,7 +18,7 @@ function init() {
 function defineSchema(conn) {
 
 	var LogSchema = defineLogSchema(conn);
-	mongoose.model("log", LogSchema); // mongoose会默认找表名为复数形式的表
+	conn.model("log", LogSchema); // mongoose会默认找表名为复数形式的表
 
 	console.log("==  define model done ==");
 }

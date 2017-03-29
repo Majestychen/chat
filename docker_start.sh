@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p /root/chat/log
+
 echo "[chat] start docker build ..."
 docker build -f ./Dockerfile -t chat .
 
@@ -10,7 +12,7 @@ echo "[chat] delete chat container"
 docker rm chat
 
 echo "[chat] run docker ..."
-docker run --rm -it -d -v /root/chat/log/:/root/.pm2/logs/ -p 3005:3005 --name chat --link db:db chat
+docker run --rm -it -d -v /root/chat/log/:/root/chat/log/ -p 3005:3005 --name chat --link db:db chat
 
 echo "[chat] start node server ..."
 docker exec -it chat /bin/bash -c "pm2 start /root/chat/ecosystem.config.js" 
