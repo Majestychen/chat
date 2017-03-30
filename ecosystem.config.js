@@ -11,7 +11,10 @@ module.exports = {
       script    : "server/server.js",
       "out_file": "log/all.log", // log会保存在工程跟目录下的log/all.log中
       "error_file": "log/all.log",
-      "log_date_format" : "YYYY-MM-DD HH:mm Z"
+      "log_date_format" : "YYYY-MM-DD HH:mm Z",
+      "env" : {
+         "NODE_ENV": "product"
+      }
     }
   ]
 }

@@ -3,8 +3,8 @@ var Schema = mongoose.Schema;
 var ObjectId = mongoose.ObjectId;
 
 
-var dbName = process.env == "product" ? "chat" : "chat_dev"
-var hostName = process.env == "product" ? "db" : "localhost"
+var dbName = process.env.NODE_ENV == "product" ? "chat" : "chat_dev"
+var hostName = process.env.NODE_ENV == "product" ? "db" : "localhost"
 
 function init() {
 	var connUrl = "mongodb://" + hostName + "/" + dbName;
