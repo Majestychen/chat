@@ -50,6 +50,11 @@ function initSocket(socket) {
 function initSocketMsg(socket) {
 	socket.on("msg", function(msg, ackFn) {
 
+		// 取得历史消息
+		if (_isGetHistory(msg, socket)) {
+			return;
+		}
+
 		// 身份认证
 		if (_isAuth(msg)) {
 			socketMap[socket.id] = {
@@ -69,11 +74,6 @@ function initSocketMsg(socket) {
 		if (_isRole(msg)) {
 			var role = msg.split(":")[1];
 			socketMap[socket.id].role = role;
-			return;
-		}
-
-		// 取得消息记录
-		if (_isGetHistory(msg, socket)) {
 			return;
 		}
 
@@ -178,7 +178,7 @@ function _isGetHistory(msg, socket) {
 	if (match == null) {
 		return;
 	}
-	var count = match[1];
+	var count = parseInt(match[1],10);
 	if (count > 10000) {
 		socket.emit("msg", {
 			type: "system",
@@ -198,6 +198,12 @@ function _isGetHistory(msg, socket) {
 				type: "history",
 				msg: JSON.stringify(data)
 			});
+
+			socketMap[socket.id] = {
+				socket: socket,
+				status: "authed"
+			}
+			_authOk(socket);
 		}
 	});
 

@@ -18,9 +18,29 @@ $(function() {
 
 		socket.on("msg", function(msg) {
 
+			// 认证成功
 			if(msg.type.indexOf("authed") != -1){
 				var role = $.cookie("role");
 				socket.emit("msg", "set_role:" + role);
+			}
+
+			// 历史消息显示
+			if(msg.type == "history") {
+				console.log(msg);
+				var $contentArea = $(".content_area");
+				$contentArea.find(".line").remove();
+				var logArr = JSON.parse(msg.msg);
+				for(var i=logArr.length - 1;i>=0;i--){
+					var msgItem = logArr[i];
+					var $lineDiv = _getLineDiv({
+						type:"msg " + msgItem.role,
+						msg:msgItem.msg,
+						time: msgItem.createtime
+					});
+					$lineDiv.appendTo($contentArea);
+				}
+				_scrollIntoView();
+				return;
 			}
 
 			_addMsg(msg);
@@ -100,6 +120,10 @@ $(function() {
 		if (/^\d{6,6}$/.test(msgContent) === true) {
 			return;
 		}
+		// 命令 - 历史消息 , 不显示
+		if(/^\d{6,6}:\d+$/.test(msgContent) === true){
+			return;
+		}
 		
 		var $contentArea = $(".content_area");
 		var $lineDiv = _getLineDiv(msg);
@@ -123,7 +147,6 @@ $(function() {
 		var reg = new RegExp("\\[(.*?)\\]", "g");
 		var matchResult = null;
 		while(matchResult = reg.exec(msgContent)){
-			console.log(matchResult);
 			if(matchResult == null){
 				break;
 			}

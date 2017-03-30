@@ -23,7 +23,7 @@ if (!window.emotions) {
 		// Date.getFormatOutput
 		Date.prototype.getFormatOutput = function() {
 			var year = this.getFullYear();
-			var month = this.getMonth();
+			var month = this.getMonth() + 1;
 			var day = this.getDate();
 			var hour = this.getHours();
 			var minute = this.getMinutes();
@@ -31,7 +31,7 @@ if (!window.emotions) {
 
 			var nowDate = new Date();
 			var todayFlag = false;
-			if (year == nowDate.getFullYear() && month == nowDate.getMonth() && day == nowDate.getDate()) {
+			if (year == nowDate.getFullYear() && month == (nowDate.getMonth() + 1) && day == nowDate.getDate()) {
 				todayFlag = true;
 			}
 			if (todayFlag === true) {
