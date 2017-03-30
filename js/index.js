@@ -60,7 +60,10 @@ $(function() {
 
 	function initEmotionBtn(){
 		$(".button.emotion").emotion({
-			input: $("textarea")
+			input: $("textarea"),
+			btnClickCallback: function(){
+				_scrollIntoView();
+			}
 		});
 	}
 
