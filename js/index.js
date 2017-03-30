@@ -82,7 +82,9 @@ $(function() {
 		$(".button.emotion").emotion({
 			input: $("textarea"),
 			btnClickCallback: function(){
-				_scrollIntoView();
+				setTimeout(function(){
+					_scrollIntoView();
+				},500);
 			}
 		});
 	}

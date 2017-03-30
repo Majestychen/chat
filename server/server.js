@@ -188,6 +188,11 @@ function _isGetHistory(msg, socket) {
 		return true;
 	}
 
+	socket.emit("msg", {
+		type: "system",
+		msg: "请稍等，数据加载中 ..."
+	});
+
 	Log.find({}).sort({
 		createtime: -1
 	}).limit(count).exec(function(err, data) {
