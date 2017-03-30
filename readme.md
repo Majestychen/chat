@@ -8,8 +8,7 @@
 
 * nodejs version
 
-	4.3.1  
-	4.5.0
+	7.0.0
 
 * 启动(dev)
 
