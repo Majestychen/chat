@@ -20,7 +20,7 @@
 	* 产品
 
 		npm run product  
-		NODE_ENV=product pm2 start --name chat server/server.js  
+		pm2 start ecosystem.config.js
 		http://your_ip_address:3005
 
 * Docker
