@@ -29,7 +29,7 @@ io.on("connection", function(socket) {
 	initSocket(socket);
 
 	// 提示身份认证
-	if(_checkAuth(socket) === false){
+	if (_checkAuth(socket) === false) {
 		return;
 	}
 
@@ -38,7 +38,7 @@ io.on("connection", function(socket) {
 
 });
 
-function initSocket(socket){
+function initSocket(socket) {
 
 	// socket.on('msg' ...)
 	initSocketMsg(socket);
@@ -47,11 +47,11 @@ function initSocket(socket){
 	initSocketDisConnect(socket);
 }
 
-function initSocketMsg(socket){
+function initSocketMsg(socket) {
 	socket.on("msg", function(msg, ackFn) {
 
 		// 身份认证
-		if(_isAuth(msg)){
+		if (_isAuth(msg)) {
 			socketMap[socket.id] = {
 				socket: socket,
 				status: "authed"
@@ -61,7 +61,7 @@ function initSocketMsg(socket){
 		}
 
 		// 检查身份认证
-		if(_checkAuth(socket) === false){
+		if (_checkAuth(socket) === false) {
 			return;
 		}
 
@@ -72,12 +72,17 @@ function initSocketMsg(socket){
 			return;
 		}
 
+		// 取得消息记录
+		if (_isGetHistory(msg, socket)) {
+			return;
+		}
+
 		// 普通消息
 		// 消息保存
 		Log.add({
 			msg: msg,
 			role: socketMap[socket.id].role || "none",
-		}, function(_id){
+		}, function(_id) {
 			// Db登陆成功，返回db中的_id
 			ackFn(_id);
 		});
@@ -93,19 +98,19 @@ function initSocketMsg(socket){
 	})
 }
 
-function initSocketDisConnect(socket){
+function initSocketDisConnect(socket) {
 
-	socket.on("disconnect", function(){
+	socket.on("disconnect", function() {
 		var socketId = socket.id;
 		var socketInfo = socketMap[socketId];
-		
-		if(!socketInfo){
+
+		if (!socketInfo) {
 			return
 		}
 
 		var isAuthed = socketInfo.status == "authed";
 		var role = _getRoleName(socketInfo.role);
-		if(isAuthed){
+		if (isAuthed) {
 			var sockets = _getAuthedSockets(socket);
 			sockets.forEach((s) => {
 				s.emit("msg", {
@@ -119,7 +124,7 @@ function initSocketDisConnect(socket){
 
 }
 
-function _checkAuth(socket){
+function _checkAuth(socket) {
 
 	var socketInfo = socketMap[socket.id];
 	if (!socketInfo || socketInfo.status != 'authed') {
@@ -134,10 +139,10 @@ function _checkAuth(socket){
 
 }
 
-function _authOk(socket){
+function _authOk(socket) {
 	var authedCount = 0;
-	for(var key in socketMap){
-		if(socketMap[key].status == "authed"){
+	for (var key in socketMap) {
+		if (socketMap[key].status == "authed") {
 			authedCount++;
 		}
 	}
@@ -163,8 +168,40 @@ function _isAuth(msg) {
 	return msg == password
 }
 
-function _isRole(msg){
+function _isRole(msg) {
 	return /^set_role:.*?$/.test(msg);
+}
+
+function _isGetHistory(msg, socket) {
+	var regExp = new RegExp("^" + password + ":(\\d+)$");
+	var match = regExp.exec(msg);
+	if (match == null) {
+		return;
+	}
+	var count = match[1];
+	if (count > 10000) {
+		socket.emit("msg", {
+			type: "system",
+			msg: "请别超过10000 ..."
+		});
+
+		return true;
+	}
+
+	Log.find({}).sort({
+		createtime: -1
+	}).limit(count).exec(function(err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			socket.emit("msg", {
+				type: "history",
+				msg: JSON.stringify(data)
+			});
+		}
+	});
+
+	return true;
 }
 
 function _getAuthedSockets(myselfSocket) {
@@ -185,7 +222,7 @@ function _getAuthedSockets(myselfSocket) {
 	return resultArr;
 }
 
-function _getRoleName(role){
+function _getRoleName(role) {
 	return role == "male" ? "男士" : "女士";
 }
 
