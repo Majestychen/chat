@@ -30,7 +30,37 @@ module.exports = function(grunt) {
         ],
         dest: 'build/bundle.js',
       }
-    }
+    },
+    cssmin: {
+      options: {
+        mergeIntoShorthands: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+          'build/all.css': [
+            'css/normalize.css',
+            'css/iconfont.css',
+            'css/chat_dialog.css',
+            'css/index.css'
+          ]
+        }
+      }
+    },
+
+    copy: {
+      main: {
+        expand: true,
+        cwd: 'css/',
+        src: [
+          '*.eot',
+          '*.svg',
+          '*.ttf',
+          '*.woff'
+        ],
+        dest: 'build/',
+      }
+    },
   });
 
   function createIndexHtml() {
@@ -48,7 +78,8 @@ module.exports = function(grunt) {
 
     fs.readFile(indexPathDev, function(err, data) {
       if (err) throw err;
-      data = data.toString().replace(/<script[\s\S]*\/script>/i, "<script src='build/bundle.min.js'></script>");
+      data = data.toString().replace(/<script[\s\S]*\/script>/i, '<script src="build/bundle.min.js"></script>');
+      data = data.replace(/<link[\s\S]*\/link>/i, '<link rel="stylesheet" type="text/css" href="build/all.css"></link>');
       fs.writeFile(indexPath, data, 'utf8', function(err) {
         if (err) {
           console.error(err)
@@ -66,10 +97,15 @@ module.exports = function(grunt) {
   // 加载包含 "concat" 任务的插件。
   grunt.loadNpmTasks('grunt-contrib-concat');
 
+  // css - min
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+
+  grunt.loadNpmTasks('grunt-contrib-copy');
+
   // 自定义任务
   grunt.registerTask('createIndexHtml', createIndexHtml);
 
   // 默认被执行的任务列表。
-  grunt.registerTask('default', ['concat', 'uglify', 'createIndexHtml']);
+  grunt.registerTask('default', ['concat', 'uglify', 'cssmin', 'copy', 'createIndexHtml']);
 
 };
