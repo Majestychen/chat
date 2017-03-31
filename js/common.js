@@ -35,9 +35,9 @@ if (!window.emotions) {
 				todayFlag = true;
 			}
 			if (todayFlag === true) {
-				return "{0}-{1}-{2} {3}:{4}:{5}".format(year, month, day, hour, minute, second);
-			} else {
 				return "{0}:{1}:{2}".format(hour, minute, second);
+			} else {
+				return "{0}-{1}-{2} {3}:{4}:{5}".format(year, month, day, hour, minute, second);
 			}
 		}
 

@@ -26,7 +26,6 @@ $(function() {
 
 			// 历史消息显示
 			if(msg.type == "history") {
-				console.log(msg);
 				var $contentArea = $(".content_area");
 				$contentArea.find(".line").remove();
 				var logArr = JSON.parse(msg.msg);
@@ -172,12 +171,16 @@ $(function() {
 			msgContent = msgContent.replace(new RegExp("\\["+infoStr+"\\]", "g"), imgStr);
 		}
 
-
 		var $div = $("<div class='line'></div>");
 		$div
 			.html(msgContent)
 			.addClass(className)
-			.attr("unixtime", unixtime);
+
+		// 消息时间
+		if(unixtime){
+			$("<div class='time'></div>").html(new Date(unixtime).getFormatOutput()).appendTo($div);
+		}
+
 		return $div;
 	}
 
