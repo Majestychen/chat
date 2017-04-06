@@ -8,6 +8,7 @@ $(function() {
 	initTextarea();
 	initEmotionBtn();
 	initSendBtn();
+	initWindowResize();
 
 	function initSocket() {
 
@@ -79,13 +80,16 @@ $(function() {
 
 	function initEmotionBtn(){
 		$(".button.emotion").emotion({
-			input: $("textarea"),
-			btnClickCallback: function(){
-				setTimeout(function(){
-					_scrollIntoView();
-				},500);
-			}
+			input: $("textarea")
 		});
+	}
+
+	function initWindowResize(){
+		$(window).on("resize", function(){
+			setTimeout(function(){
+				_scrollIntoView();
+			},0);
+		})
 	}
 
 	// 发送消息
@@ -94,7 +98,7 @@ $(function() {
 	function _sendMsg() {
 		var $ta = $("textarea");
 		var msgValue = $ta.val();
-		msgValue = msgValue.trim();
+		msgValue = $.trim(msgValue);
 		if(!msgValue || msgValue == ""){
 			return;
 		}

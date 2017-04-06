@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          'js/lib/jquery-2.2.4.js',
+          'js/lib/jquery-1.12.4.js',
           'js/lib/jquery.cookie.js',
           'js/lib/autosize.js',
           'js/lib/socket.io.js',
