@@ -1,8 +1,20 @@
 "use strict";
 
-// global variables
-if (!window.emotions) {
-	window.emotions = {};
+// 客户端和服务端共用的js文件
+
+var isClient = true;
+try {
+	window
+} catch (e) {
+	isClient = false;
+}
+
+if (isClient === true) {
+	// 客户端
+	// global variables
+	if (!window.emotions) {
+		window.emotions = {};
+	}
 }
 
 
@@ -39,6 +51,23 @@ if (!window.emotions) {
 			} else {
 				return "{0}-{1}-{2} {3}:{4}:{5}".format(year, month, day, hour, minute, second);
 			}
+		}
+
+		// Date.nHourBefore
+		Date.prototype.nHourBefore = function(hourCount) {
+			var onMinute = 60 * 1000;
+			var oneHour = 60 * onMinute;
+			var resultDate = new Date(this.getTime() - oneHour * hourCount);
+			return resultDate;
+		}
+
+		// Date.nDayBefore
+		Date.prototype.nDayBefore = function(dayCount) {
+			var onMinute = 60 * 1000;
+			var oneHour = 60 * onMinute;
+			var oneDay = 24 * oneHour;
+			var resultDate = new Date(this.getTime() - oneDay * dayCount);
+			return resultDate;
 		}
 
 	}

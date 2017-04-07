@@ -107,3 +107,34 @@ div.emotion.popup:after {
 	display: block;
 	clear: both;
 }
+
+/* Border styles */
+div.statistic table thead, div.statistic table tr {
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: rgb(211, 202, 221);
+}
+div.statistic table {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: rgb(211, 202, 221);
+
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: rgb(211, 202, 221);
+}
+
+/* Padding and font style */
+div.statistic table td, div.statistic table th {
+	padding: 5px 10px;
+	font-size: 12px;
+	color: rgb(95, 74, 121);
+}
+
+/* Alternating background colors */
+div.statistic table tr:nth-child(even) {
+	background: rgb(223, 216, 232);
+}
+div.statistic table tr:nth-child(odd) {
+	background: #FFF
+}

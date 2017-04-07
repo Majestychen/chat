@@ -79,6 +79,19 @@ function defineLogSchema() {
 		});
 	}
 
+	LogSchema.statics.findByRange = function(startDate, endDate, callback) {
+		var Log = this;
+		Log.find({
+			createtime: { $lte: endDate, $gte: startDate}
+		}, function(err, record) {
+			if (err) {
+				console.error("LogSchema findByRange ERROR !", err);
+			} else {
+				callback(record);
+			}
+		});
+	}
+
 	return LogSchema;
 }
 

@@ -1,3 +1,5 @@
+require("../js/common.js");
+
 var path = require("path");
 
 // KOA
@@ -51,7 +53,15 @@ function initSocketMsg(socket) {
 	socket.on("msg", function(msg, ackFn) {
 
 		// 取得历史消息
+		// ${password}:100
 		if (_isGetHistory(msg, socket)) {
+			return;
+		}
+
+		// 统计功能
+		// ${password}:tj:10d
+		// ${password}:tj:24h
+		if (_isStatistic(msg, socket)) {
 			return;
 		}
 
@@ -210,6 +220,85 @@ function _isGetHistory(msg, socket) {
 			}
 			_authOk(socket);
 		}
+	});
+
+	return true;
+}
+
+
+function _isStatistic(msg, socket) {
+	var regExp = new RegExp("^" + password + ":tj:(\\d+)([h|d])$");
+	var match = regExp.exec(msg);
+	if (match == null) {
+		return;
+	}
+
+	socketMap[socket.id] = {
+		socket: socket,
+		status: "authed"
+	}
+	_authOk(socket);
+
+	var count = parseInt(match[1], 10);
+	var unit = match[2];
+
+	var d = new Date();
+	var startDate = null;
+	var endDate = null;
+	if (unit == "d") {
+		startDate = d.nDayBefore(count);
+		endDate = d;
+	} else {
+		startDate = d.nHourBefore(count);
+		endDate = d;
+	}
+
+	var sockets = _getAuthedSockets();
+	sockets.forEach(function(s) {
+		s.emit("msg", {
+			type: "system",
+			msg: "统计进行中，稍后发送结果 ... 您可以继续聊天 "
+		});
+	});
+
+
+	var lineCountMale = 0;
+	var lineCountFemale = 0;
+	var wordCountMale = 0;
+	var wordCountFemale = 0;
+	Log.findByRange(startDate, endDate, function(records) {
+
+		records.forEach(function(recordItem) {
+			var msg = recordItem.msg;
+			msg = msg.replace(/\[.*?\]/g, "");
+			if (!msg || msg.trim() == "") {
+				return;
+			}
+			if (recordItem.role == "male") {
+				lineCountMale++;
+				wordCountMale += msg.length;
+			}
+			if (recordItem.role == "female") {
+				lineCountFemale++;
+				wordCountFemale += msg.length;
+			}
+		});
+
+		sockets.forEach(function(s) {
+			s.emit("msg", {
+				type: "statistic",
+				msg: JSON.stringify({
+					unit: unit,
+					unitCount: count,
+					startDate: startDate,
+					endDate: endDate,
+					lineCountMale: lineCountMale,
+					lineCountFemale: lineCountFemale,
+					wordCountMale: wordCountMale,
+					wordCountFemale: wordCountFemale
+				})
+			});
+		});
 	});
 
 	return true;

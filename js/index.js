@@ -20,26 +20,18 @@ $(function() {
 		socket.on("msg", function(msg) {
 
 			// 认证成功
-			if(msg.type.indexOf("authed") != -1){
+			if (msg.type.indexOf("authed") != -1) {
 				var role = $.cookie("role");
 				socket.emit("msg", "set_role:" + role);
 			}
 
 			// 历史消息显示
-			if(msg.type == "history") {
-				var $contentArea = $(".content_area");
-				$contentArea.find(".line").remove();
-				var logArr = JSON.parse(msg.msg);
-				for(var i=logArr.length - 1;i>=0;i--){
-					var msgItem = logArr[i];
-					var $lineDiv = _getLineDiv({
-						type:"msg " + msgItem.role,
-						msg:msgItem.msg,
-						time: msgItem.createtime
-					});
-					$lineDiv.appendTo($contentArea);
-				}
-				_scrollIntoView();
+			if (_historyMsg(msg) === true) {
+				return;
+			}
+
+			// 统计消息
+			if (_statisticMsg(msg) === true){
 				return;
 			}
 
@@ -48,48 +40,122 @@ $(function() {
 
 	}
 
-	function initTextarea(){
+	function initTextarea() {
 		// 使用autosize插件，让textarea自动高度
 		autosize($("textarea"));
 
-		$(document).on("autosize:resized", function(){
+		$(document).on("autosize:resized", function() {
 			var taHeight = $("textarea").height();
-			var bottomHeight = taHeight + 10;
+			var bottomHeight = taHeight + 5;
 			$(".bottom").height(bottomHeight + "px");
 			$(".top").css({
-				"bottom": bottomHeight + "px"
+				"bottom": bottomHeight + 10 + "px"
 			});
 			_scrollIntoView();
 		})
 	}
 
 	function initSendBtn() {
-		function _doSendMsg(e){
+		function _doSendMsg(e) {
 			_sendMsg();
 			$("div.emotion.popup").hide();
 		}
 
 		$("#send").on("click", _doSendMsg);
 		$("div.input").keypress(function(e) {
-			if ((e.keyCode == 13  || e.keyCode == 10) && e.ctrlKey) {
+			if ((e.keyCode == 13 || e.keyCode == 10) && e.ctrlKey) {
 				_doSendMsg(e);
 			}
 		})
 
 	}
 
-	function initEmotionBtn(){
+	function initEmotionBtn() {
 		$(".button.emotion").emotion({
 			input: $("textarea")
 		});
 	}
 
-	function initWindowResize(){
-		$(window).on("resize", function(){
-			setTimeout(function(){
+	function initWindowResize() {
+		$(window).on("resize", function() {
+			setTimeout(function() {
 				_scrollIntoView();
-			},0);
+			}, 0);
 		})
+	}
+
+	function _historyMsg(msg) {
+		if (msg.type == "history") {
+			var $contentArea = $(".content_area");
+			$contentArea.find(".line").remove();
+			$contentArea.find(".statistic").remove();
+			var logArr = JSON.parse(msg.msg);
+			for (var i = logArr.length - 1; i >= 0; i--) {
+				var msgItem = logArr[i];
+				var $lineDiv = _getLineDiv({
+					type: "msg " + msgItem.role,
+					msg: msgItem.msg,
+					time: msgItem.createtime
+				});
+				$lineDiv.appendTo($contentArea);
+			}
+			_scrollIntoView();
+			return true;
+		}
+		return false;
+	}
+
+	function _statisticMsg(msg){
+		if(msg.type == "statistic"){
+			var $contentArea = $(".content_area");
+
+			var msg = JSON.parse(msg.msg);
+			var $div = $('<div class="statistic"></div>');
+			var $tb = $('<table></table>');
+			var $tr = $('<tr></tr>');
+			$('<td></td>').html("统计时长").appendTo($tr);
+			$('<td></td>').html(msg.unitCount + (msg.unit == 'd' ? "天" : "小时")).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("开始时间").appendTo($tr);
+			$('<td></td>').html(new Date(msg.startDate).getFormatOutput()).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("结束时间").appendTo($tr);
+			$('<td></td>').html(new Date(msg.endDate).getFormatOutput()).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("男士（句子）").appendTo($tr);
+			$('<td></td>').html(msg.lineCountMale).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("女士（句子）").appendTo($tr);
+			$('<td></td>').html(msg.lineCountFemale).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("男士（字数）").appendTo($tr);
+			$('<td></td>').html(msg.wordCountMale).appendTo($tr);
+			$tr.appendTo($tb);
+
+			$tr = $('<tr></tr>');
+			$('<td></td>').html("女士（字数）").appendTo($tr);
+			$('<td></td>').html(msg.wordCountFemale).appendTo($tr);
+			$tr.appendTo($tb);
+
+
+			$tb.appendTo($div);
+			$div.appendTo($contentArea);
+			_scrollIntoView($("div.statistic:last")[0]);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// 发送消息
@@ -99,7 +165,7 @@ $(function() {
 		var $ta = $("textarea");
 		var msgValue = $ta.val();
 		msgValue = $.trim(msgValue);
-		if(!msgValue || msgValue == ""){
+		if (!msgValue || msgValue == "") {
 			return;
 		}
 
@@ -125,11 +191,17 @@ $(function() {
 		if (/^\d{6,6}$/.test(msgContent) === true) {
 			return;
 		}
+
 		// 命令 - 历史消息 , 不显示
-		if(/^\d{6,6}:\d+$/.test(msgContent) === true){
+		if (/^\d{6,6}:\d+$/.test(msgContent) === true) {
 			return;
 		}
-		
+
+		// 命令 - 统计 , 不显示
+		if (/^\d{6,6}:tj:\d+[h|d]$/.test(msgContent) === true) {
+			return;
+		}
+
 		var $contentArea = $(".content_area");
 		var $lineDiv = _getLineDiv(msg);
 		$lineDiv.appendTo($contentArea);
@@ -139,7 +211,7 @@ $(function() {
 		return $lineDiv;
 	}
 
-	function _getLineDiv(msg){
+	function _getLineDiv(msg) {
 
 		var className = msg.type;
 		var msgContent = msg.msg;
@@ -151,8 +223,8 @@ $(function() {
 		// 表情符号的处理
 		var reg = new RegExp("\\[(.*?)\\]", "g");
 		var matchResult = null;
-		while(matchResult = reg.exec(msgContent)){
-			if(matchResult == null){
+		while (matchResult = reg.exec(msgContent)) {
+			if (matchResult == null) {
 				break;
 			}
 
@@ -172,7 +244,7 @@ $(function() {
 			var bg = "white url('{0}') {1}px {2}px".format(imgPath, posx, posy);
 			var imgStr = '<span class="emotion" style="display:inline-block;width:{0}px;height:{1}px;background:{2}"></span>'
 			imgStr = imgStr.format(singleSizeW, singleSizeH, bg);
-			msgContent = msgContent.replace(new RegExp("\\["+infoStr+"\\]", "g"), imgStr);
+			msgContent = msgContent.replace(new RegExp("\\[" + infoStr + "\\]", "g"), imgStr);
 		}
 
 		var $div = $("<div class='line'></div>");
@@ -181,7 +253,7 @@ $(function() {
 			.addClass(className)
 
 		// 消息时间
-		if(unixtime){
+		if (unixtime) {
 			$("<div class='time'></div>").html(new Date(unixtime).getFormatOutput()).appendTo($div);
 		}
 
@@ -218,15 +290,20 @@ $(function() {
 			$(document).off("click.role").on("click.role", "div.role button", function() {
 				var role = this.className;
 				$("div.role").remove();
-				$.cookie("role", role, {expires: 365});
+				$.cookie("role", role, {
+					expires: 365
+				});
 			});
 		}
 	}
 
-	function _scrollIntoView(){
-		var $div = $(".content_area .line:last")[0];
-		if($div){
-			$div.scrollIntoView();
+	function _scrollIntoView(ele) {
+		if(!ele){
+			ele = $(".content_area .line:last")[0];
+		}
+
+		if (ele) {
+			ele.scrollIntoView();
 		}
 	}
 })
