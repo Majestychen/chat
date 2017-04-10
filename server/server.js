@@ -21,7 +21,17 @@ var io = require('socket.io')(server);
 // password
 var fs = require("fs");
 var password = fs.readFileSync(path.resolve(__dirname, "..", "password.txt")).toString().trim();
-console.log("[password]", password);
+
+// nodejieba
+var nodejieba = null;
+try {
+	nodejieba = require("nodejieba");
+} catch (e) {}
+if (nodejieba) {
+	nodejieba.load({
+		userDict: path.resolve(__dirname, 'dict', 'userdict.utf8')
+	});
+}
 
 var socketMap = {};
 
@@ -188,7 +198,7 @@ function _isGetHistory(msg, socket) {
 	if (match == null) {
 		return;
 	}
-	var count = parseInt(match[1],10);
+	var count = parseInt(match[1], 10);
 	if (count > 10000) {
 		socket.emit("msg", {
 			type: "system",
@@ -268,6 +278,8 @@ function _isStatistic(msg, socket) {
 	var wordCountFemale = 0;
 	Log.findByRange(startDate, endDate, function(records) {
 
+		var recordArrForwordRate = [];
+
 		records.forEach(function(recordItem) {
 			var msg = recordItem.msg;
 			msg = msg.replace(/\[.*?\]/g, "");
@@ -282,7 +294,10 @@ function _isStatistic(msg, socket) {
 				lineCountFemale++;
 				wordCountFemale += msg.length;
 			}
+			recordArrForwordRate.push(recordItem);
 		});
+
+		var wordRateObj = getWordRate(recordArrForwordRate, 10);
 
 		sockets.forEach(function(s) {
 			s.emit("msg", {
@@ -295,13 +310,74 @@ function _isStatistic(msg, socket) {
 					lineCountMale: lineCountMale,
 					lineCountFemale: lineCountFemale,
 					wordCountMale: wordCountMale,
-					wordCountFemale: wordCountFemale
+					wordCountFemale: wordCountFemale,
+					wordRateObj: wordRateObj
 				})
 			});
 		});
 	});
 
 	return true;
+}
+
+function getWordRate(recordArr, topNum) {
+	if (!nodejieba) {
+		return null;
+	}
+	var recordJiebaArr = recordArr.map((record) => {
+		return {
+			role: record.role,
+			msgArr: nodejieba.cut(record.msg)
+		}
+	});
+
+	var allMsgArr = recordJiebaArr;
+
+	var maleMsgArr = recordJiebaArr.filter(function(item) {
+		return item.role === "male"
+	});
+
+	var femaleMsgArr = recordJiebaArr.filter(function(item) {
+		return item.role === "female"
+	});
+
+	return {
+		all: _getWordRate(allMsgArr, topNum),
+		male: _getWordRate(maleMsgArr, topNum),
+		female: _getWordRate(femaleMsgArr, topNum)
+	}
+}
+
+function _getWordRate(recordArr, topNum) {
+	var rateObj = {};
+	var rateArr = [];
+
+	recordArr.forEach(function(recordItem) {
+		var msgArr = recordItem.msgArr;
+		msgArr.forEach(function(msg) {
+			if (rateObj[msg] == null || rateObj[msg] == undefined) {
+				rateObj[msg] = 0;
+			} else {
+				rateObj[msg] = rateObj[msg] + 1;
+			}
+		})
+
+	});
+
+	for (var key in rateObj) {
+		rateArr.push([key, rateObj[key]]);
+	}
+
+	rateArr.sort(function(a, b) {
+		if (a[1] == b[1]) {
+			return 0;
+		} else {
+			return a[1] < b[1] ? 1 : -1;
+		}
+	});
+
+	var resultArr = rateArr.slice(0, topNum);
+	return resultArr;
 }
 
 function _getAuthedSockets(myselfSocket) {

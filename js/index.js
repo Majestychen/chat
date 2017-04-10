@@ -31,7 +31,7 @@ $(function() {
 			}
 
 			// 统计消息
-			if (_statisticMsg(msg) === true){
+			if (_statisticMsg(msg) === true) {
 				return;
 			}
 
@@ -105,8 +105,8 @@ $(function() {
 		return false;
 	}
 
-	function _statisticMsg(msg){
-		if(msg.type == "statistic"){
+	function _statisticMsg(msg) {
+		if (msg.type == "statistic") {
 			var $contentArea = $(".content_area");
 
 			var msg = JSON.parse(msg.msg);
@@ -147,6 +147,40 @@ $(function() {
 			$('<td></td>').html(msg.wordCountFemale).appendTo($tr);
 			$tr.appendTo($tb);
 
+			var wordRateObj = msg.wordRateObj;
+			if (wordRateObj) {
+
+				var allRateArr = wordRateObj["all"];
+				var maleRateArr = wordRateObj["male"];
+				var femaleRateArr = wordRateObj["female"];
+
+				var rateStr = "";
+				allRateArr.forEach(function(item) {
+					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+				})
+				$tr = $('<tr></tr>');
+				$('<td></td>').html("全部词频").appendTo($tr);
+				$('<td></td>').html(rateStr).appendTo($tr);
+				$tr.appendTo($tb);
+
+				rateStr = "";
+				maleRateArr.forEach(function(item) {
+					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+				})
+				$tr = $('<tr></tr>');
+				$('<td></td>').html("男士词频").appendTo($tr);
+				$('<td></td>').html(rateStr).appendTo($tr);
+				$tr.appendTo($tb);
+
+				rateStr = "";
+				femaleRateArr.forEach(function(item) {
+					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+				})
+				$tr = $('<tr></tr>');
+				$('<td></td>').html("女士词频").appendTo($tr);
+				$('<td></td>').html(rateStr).appendTo($tr);
+				$tr.appendTo($tb);
+			}
 
 			$tb.appendTo($div);
 			$div.appendTo($contentArea);
@@ -298,7 +332,7 @@ $(function() {
 	}
 
 	function _scrollIntoView(ele) {
-		if(!ele){
+		if (!ele) {
 			ele = $(".content_area .line:last")[0];
 		}
 
