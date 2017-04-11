@@ -33,6 +33,9 @@ if (nodejieba) {
 	});
 }
 
+var skipWordsArr = fs.readFileSync(path.resolve(__dirname, "dict", "skipwords.utf8")).toString().trim().split(/\r\n/);
+// console.log("skipWordsArr", skipWordsArr);
+
 var socketMap = {};
 
 io.on("connection", function(socket) {
@@ -325,9 +328,26 @@ function getWordRate(recordArr, topNum) {
 		return null;
 	}
 	var recordJiebaArr = recordArr.map((record) => {
+		
+		// 分词
+		var cutArr = nodejieba.cut(record.msg);
+		cutArr = cutArr.filter((m) => {
+			// 长度小于等于1 的词不要
+			if(m.length <= 1 ){
+				return false;
+			}
+
+			// 不想被统计的词，不要
+			if(_inSkipWords(m) === true){
+				return false;
+			}
+
+			return true;
+		});
+
 		return {
 			role: record.role,
-			msgArr: nodejieba.cut(record.msg)
+			msgArr: cutArr
 		}
 	});
 
@@ -396,6 +416,14 @@ function _getAuthedSockets(myselfSocket) {
 		}
 	}
 	return resultArr;
+}
+
+function _inSkipWords(word){
+	if(skipWordsArr.indexOf(word) != -1){
+		return true;
+	}else {
+		return false;
+	}
 }
 
 function _getRoleName(role) {
