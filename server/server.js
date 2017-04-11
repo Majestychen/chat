@@ -376,7 +376,7 @@ function _getWordRate(recordArr, topNum) {
 		var msgArr = recordItem.msgArr;
 		msgArr.forEach(function(msg) {
 			if (rateObj[msg] == null || rateObj[msg] == undefined) {
-				rateObj[msg] = 0;
+				rateObj[msg] = 1;
 			} else {
 				rateObj[msg] = rateObj[msg] + 1;
 			}
