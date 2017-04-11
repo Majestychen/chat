@@ -33,7 +33,7 @@ if (nodejieba) {
 	});
 }
 
-var skipWordsArr = fs.readFileSync(path.resolve(__dirname, "dict", "skipwords.utf8")).toString().trim().split(/\r\n/);
+var skipWordsArr = fs.readFileSync(path.resolve(__dirname, "dict", "skipwords.utf8")).toString().trim().split(/\n/);
 // console.log("skipWordsArr", skipWordsArr);
 
 var socketMap = {};
