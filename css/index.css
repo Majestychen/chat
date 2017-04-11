@@ -131,6 +131,15 @@ div.statistic table td, div.statistic table th {
 	color: rgb(95, 74, 121);
 }
 
+div.statistic table tr td:first-child {
+	width: 95px;
+}
+
+div.statistic table span {
+	display:inline-block;
+	margin-right: 15px;
+}
+
 /* Alternating background colors */
 div.statistic table tr:nth-child(even) {
 	background: rgb(223, 216, 232);
