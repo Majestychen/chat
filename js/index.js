@@ -156,7 +156,7 @@ $(function() {
 
 				var rateStr = "";
 				allRateArr.forEach(function(item) {
-					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+					rateStr += "<span>{0}({1})</span>".format(item[0], item[1]);
 				})
 				$tr = $('<tr></tr>');
 				$('<td></td>').html("全部词频").appendTo($tr);
@@ -165,7 +165,7 @@ $(function() {
 
 				rateStr = "";
 				maleRateArr.forEach(function(item) {
-					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+					rateStr += "<span>{0}({1})</span>".format(item[0], item[1]);
 				})
 				$tr = $('<tr></tr>');
 				$('<td></td>').html("男士词频").appendTo($tr);
@@ -174,7 +174,7 @@ $(function() {
 
 				rateStr = "";
 				femaleRateArr.forEach(function(item) {
-					rateStr += "<span>%s(%s)</span>".format(item[0], item[1]);
+					rateStr += "<span>{0}({1})</span>".format(item[0], item[1]);
 				})
 				$tr = $('<tr></tr>');
 				$('<td></td>').html("女士词频").appendTo($tr);

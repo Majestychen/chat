@@ -48,3 +48,6 @@ COPY . $SOURCE_DIR/
 
 # webpack code package
 RUN npm run product
+
+# 由于阿里云主机配置太低，为了防止npm install 死机，单独安装nodejieba
+RUN npm install nodejieba
