@@ -65,7 +65,7 @@ $(function() {
 
 		$("#send").on("click", _doSendMsg);
 		$("div.input").keypress(function(e) {
-			if ((e.keyCode == 13 || e.keyCode == 10) && e.ctrlKey) {
+			if ((e.keyCode == 13 || e.keyCode == 10) && !e.ctrlKey) {
 				_doSendMsg(e);
 			}
 		})
