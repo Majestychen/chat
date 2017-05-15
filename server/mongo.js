@@ -9,7 +9,7 @@ var path = require("path");
 var uri = "";
 var options = null;
 if(process.env.NODE_ENV === "product"){
-	var PWD = fs.readFileSync(path.resolve("/root", "mongo_pwd.txt")).toString().trim();
+	var PWD = fs.readFileSync(path.resolve(__dirname, "..", "mongo_pwd.txt")).toString().trim();
 	var PORT = 27777;
 	var hostName = "db";
 	uri = "mongodb://"+ hostName + ":" + PORT + "/chat";
