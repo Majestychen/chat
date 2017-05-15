@@ -42,8 +42,8 @@ var Log = conn.model("log");
 
 
 var d = new Date();
-var s = d.nDayBefore(10);
-var e = d.nDayBefore(9);;
+var s = d.nDayBefore(5);
+var e = d.nDayBefore(1);;
 Log.findByRange(s,e, function(records){
 	records.forEach(function(r){
 		console.log(r.createtime, r.msg)

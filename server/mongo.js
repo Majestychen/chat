@@ -1,13 +1,20 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.ObjectId;
+var fs = require("fs");
+var path = require("path");
+
+var PWD = fs.readFileSync(path.resolve("/root", "mongo_pwd.txt")).toString().trim();
+var PORT = 27777;
 
 
 var dbName = process.env.NODE_ENV == "product" ? "chat" : "chat_dev"
 var hostName = process.env.NODE_ENV == "product" ? "db" : "localhost"
 
 function init() {
-	var connUrl = "mongodb://" + hostName + "/" + dbName;
+	var connUrl = "mongodb://super:" + pwd + "@" + hostName + ":" + PORT + "/" + dbName;
+	console.log(connUrl);
+	
 	console.log("connUrl", connUrl);
 	var conn = mongoose.createConnection(connUrl);
 	conn.on("error", (err) => console.log("connection error, ", err));
