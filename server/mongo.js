@@ -4,19 +4,29 @@ var ObjectId = mongoose.ObjectId;
 var fs = require("fs");
 var path = require("path");
 
-var PWD = fs.readFileSync(path.resolve("/root", "mongo_pwd.txt")).toString().trim();
-var PORT = 27777;
 
+// 数据库连接信息
+var uri = "";
+var options = null;
+if(process.env.NODE_ENV !== "product"){
+	var PWD = fs.readFileSync(path.resolve("/root", "mongo_pwd.txt")).toString().trim();
+	var PORT = 27777;
+	var hostName = "db";
+	uri = "mongodb://"+ hostName + ":" + PORT + "/chat";
+	options = {
+	  user: 'super',
+	  pass: PWD
+	}
+}else {
+	uri = "mongodb://localhost/chat_dev";
+	options = {};
+}
 
-var dbName = process.env.NODE_ENV == "product" ? "chat" : "chat_dev"
-var hostName = process.env.NODE_ENV == "product" ? "db" : "localhost"
 
 function init() {
-	var connUrl = "mongodb://super:" + pwd + "@" + hostName + ":" + PORT + "/" + dbName;
-	console.log(connUrl);
+	console.log(uri, options);
 	
-	console.log("connUrl", connUrl);
-	var conn = mongoose.createConnection(connUrl);
+	var conn = mongoose.createConnection(uri, options);
 	conn.on("error", (err) => console.log("connection error, ", err));
 	defineSchema(conn);
 	return conn;
