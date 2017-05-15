@@ -8,7 +8,7 @@ var path = require("path");
 // 数据库连接信息
 var uri = "";
 var options = null;
-if(process.env.NODE_ENV !== "product"){
+if(process.env.NODE_ENV === "product"){
 	var PWD = fs.readFileSync(path.resolve("/root", "mongo_pwd.txt")).toString().trim();
 	var PORT = 27777;
 	var hostName = "db";
