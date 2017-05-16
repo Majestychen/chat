@@ -11,6 +11,15 @@ $(function() {
 	initWindowResize();
 
 	initOsSystem();
+	initShowTime();
+
+	function initShowTime(){
+		$(document).on("click", "div.line.msg", function(){
+			$(this).find("div.time").css({
+				display: "block"
+			});
+		});
+	}
 
 	function initSocket() {
 
@@ -215,12 +224,12 @@ $(function() {
 		autosize.update($ta);
 		$ta.focus();
 
-		var $msgDiv = _addMsg(msg);
+		var $msgDiv = _addMsg(msg, true);
 		_emit(msgValue, $msgDiv);
 	}
 
 	// 显示消息： 自己发送的 + 从服务器接收的
-	function _addMsg(msg) {
+	function _addMsg(msg, selfSendFlg) {
 
 		// 认证密码输入，不显示
 		var msgContent = msg.msg;
@@ -241,6 +250,12 @@ $(function() {
 		var $contentArea = $(".content_area");
 		var $lineDiv = _getLineDiv(msg);
 		$lineDiv.appendTo($contentArea);
+
+		// 自己发送的消息 && 不是历史 也不是统计消息的情况
+		// 这是减少div的数量 （因为 safari浏览器的性能问题）
+		if(selfSendFlg === true){
+			_reduceDivCount();
+		}
 
 		_scrollIntoView();
 
@@ -347,6 +362,20 @@ $(function() {
 		var os = _getMobileOperatingSystem();
 		if(os == "IOS") {
 			$(document.body).addClass("ios");
+		}
+	}
+
+	function _reduceDivCount(){
+		var maxCount = 50;
+
+		var $body = $(document.body);
+		if($body.hasClass("ios")){
+			var divs = $(".content_area > div.line");
+			var len = divs.length;
+			var removeCount = len - maxCount;
+			if(removeCount > 0){
+				divs.slice(0,removeCount).remove();
+			}
 		}
 	}
 

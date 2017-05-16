@@ -41,6 +41,10 @@ if (isClient === true) {
 			var minute = this.getMinutes();
 			var second = this.getSeconds();
 
+			hour = addZero(hour,2);
+			minute = addZero(minute,2);
+			second = addZero(second, 2);
+
 			var nowDate = new Date();
 			var todayFlag = false;
 			if (year == nowDate.getFullYear() && month == (nowDate.getMonth() + 1) && day == nowDate.getDate()) {
@@ -68,6 +72,17 @@ if (isClient === true) {
 			var oneDay = 24 * oneHour;
 			var resultDate = new Date(this.getTime() - oneDay * dayCount);
 			return resultDate;
+		}
+
+		function addZero(param, len){
+			var str = param + "";
+			var count = len - str.length;
+			if(count <=0 ){
+				return str;
+			}else {
+				var zeroArr = Array.apply(null, {length: count}).map(function(){return "0"});
+				return zeroArr.join("") + str;
+			}
 		}
 
 	}
